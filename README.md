@@ -17,7 +17,7 @@ func main() {
     // start and end date between which you wants to calculator cagr percentage
     startDate := time.Date(2020, time.November, 3, 0, 0, 0, 0, time.UTC)
     endDate := time.Date(2021, time.October, 5, 0, 0, 0, 0, time.UTC)
-    
+    // enter trading symbol of the stock
     cagrval := cagrcalculator.CagrCal("RELIANCE", startDate, endDate)
     fmt.Printf("%+v\n", cagrval)
 }
