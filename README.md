@@ -27,3 +27,5 @@ func main() {
 ```
 {symbol:RELIANCE cagrper:44.97}
 ```
+
+**Disclaimer** : This was done as a hobby project and shouldn't be use for commercial purpose. Go through NSE usage terms [here](https://www.nseindia.com/nse-terms-of-use).
