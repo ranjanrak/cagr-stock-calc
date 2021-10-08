@@ -12,37 +12,37 @@ import (
 	"time"
 )
 
-type StockClose struct {
-	Symbol     string
-	StartPrice float64
-	EndPrice   float64
+type stockClose struct {
+	symbol     string
+	startPrice float64
+	endPrice   float64
 }
 
 const (
-	NseBase string = "https://archives.nseindia.com/content/historical/EQUITIES/"
+	nseBase string = "https://archives.nseindia.com/content/historical/EQUITIES/"
 )
 
-func StockData(symbol string, startTime time.Time, endTime time.Time) StockClose {
+func stockData(symbol string, startTime time.Time, endTime time.Time) stockClose {
 	// fetch close price for the start date
-	StartUrl := BhavUrl(startTime)
-	StartPrice := ReqBhav(symbol, StartUrl)
+	startUrl := bhavUrl(startTime)
+	startPrice := reqBhav(symbol, startUrl)
 
 	// fetch close price for the end date
-	EndUrl := BhavUrl(endTime)
-	EndPrice := ReqBhav(symbol, EndUrl)
+	endUrl := bhavUrl(endTime)
+	endPrice := reqBhav(symbol, endUrl)
 
-	return StockClose{
-		Symbol:     symbol,
-		StartPrice: StartPrice,
-		EndPrice:   EndPrice,
+	return stockClose{
+		symbol:     symbol,
+		startPrice: startPrice,
+		endPrice:   endPrice,
 	}
 
 }
 
-func ReqBhav(symbol string, BhavUrl string) float64 {
+func reqBhav(symbol string, bhavUrl string) float64 {
 	client := &http.Client{}
 	// stream=True
-	req, err := http.NewRequest("GET", BhavUrl, nil)
+	req, err := http.NewRequest("GET", bhavUrl, nil)
 	if err != nil {
 		log.Fatal("Request preparation failed", err)
 	}
@@ -58,8 +58,8 @@ func ReqBhav(symbol string, BhavUrl string) float64 {
 	// to-do : Unzip in memory without downloading
 
 	// Create a zip file
-	BhavZip := "bhavdata.csv.zip"
-	out, err := os.Create(BhavZip)
+	bhavZip := "bhavdata.csv.zip"
+	out, err := os.Create(bhavZip)
 	if err != nil {
 		log.Fatal("Zip file not created", err)
 	}
@@ -72,7 +72,7 @@ func ReqBhav(symbol string, BhavUrl string) float64 {
 	}
 
 	// read zip file
-	r, e := zip.OpenReader(BhavZip)
+	r, e := zip.OpenReader(bhavZip)
 	if e != nil {
 		panic(e)
 	}
@@ -114,18 +114,18 @@ func ReqBhav(symbol string, BhavUrl string) float64 {
 
 }
 
-func BhavUrl(ReqstTime time.Time) string {
+func bhavUrl(reqstTime time.Time) string {
 	// Create Bhav request url
-	DateFmt := FormatTime(ReqstTime)
-	UrlFmt := NseBase + DateFmt[5:] + "/" + strings.ToUpper(DateFmt[2:5]) + "/" + "cm" +
-		strings.ToUpper(DateFmt) + "bhav.csv.zip"
-	return UrlFmt
+	dateFmt := formatTime(reqstTime)
+	urlFmt := nseBase + dateFmt[5:] + "/" + strings.ToUpper(dateFmt[2:5]) + "/" + "cm" +
+		strings.ToUpper(dateFmt) + "bhav.csv.zip"
+	return urlFmt
 }
 
-func FormatTime(ReqTime time.Time) string {
+func formatTime(reqTime time.Time) string {
 	// Format time obj to required url arrangement
-	DayMonthStr := ReqTime.Format("02Jan")
-	YearStr := ReqTime.Format("2006")
-	DateStr := DayMonthStr + YearStr
-	return DateStr
+	dayMonthStr := reqTime.Format("02Jan")
+	yearStr := reqTime.Format("2006")
+	dateStr := dayMonthStr + yearStr
+	return dateStr
 }
